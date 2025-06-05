@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeu Anniversaire Mon Amour</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b8b;
+            --secondary-color: #ff8e9e;
+            --dark-color: #5e2b3b;
+            --light-color: #fff5f7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 200, 215, 0.3) 0%, rgba(255, 255, 255, 0.9) 90%);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+        
+        .photo-container {
+            width: clamp(120px, 30vw, 200px);
+            height: clamp(120px, 30vw, 200px);
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            position: relative;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .photo-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        .poem-carousel {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            min-height: 300px;
+            margin: 15px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .poem-slider {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 1s ease-in-out;
+        }
+        
+        .poem-slide {
+            min-width: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: white;
+            color: var(--dark-color);
+        }
+        
+        .poem-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .poem-content {
+            font-style: italic;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .poem-author {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: clamp(0.8rem, 2vw, 1.1rem);
+        }
+        
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            opacity: 0;
+            animation: float 6s ease-in infinite;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            color: var(--dark-color);
+            margin-top: auto;
+            width: 100%;
+        }
+        
+        .slide-indicators {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .indicator.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 107, 139, 0.4);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(255, 107, 139, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 107, 139, 0);
+            }
+        }
+        
+        /* Améliorations pour très petits écrans */
+        @media (max-width: 400px) {
+            .poem-slide {
+                padding: 20px 15px;
+            }
+            
+            .poem-content br {
+                display: none;
+            }
+            
+            .poem-content {
+                line-height: 1.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Joyeu Anniversaire Mon Amour</h1>
+            <p class="subtitle">Une collection de poèmes pour célébrer ta journée spéciale</p>
+            
+            <div class="photo-container">
+                <!-- Remplace le src par la photo de ta femme -->
+                <img src="/photo/image1.jpg" alt="Ma merveilleuse femme">
+            </div>
+        </header>
+        
+        <div class="poem-carousel">
+            <div class="poem-slider" id="slider">
+                <div class="poem-slide">
+                    <h2 class="poem-title">Mon Cœur T'appartient</h2>
+                    <p class="poem-content">
+                        Dans tes yeux je vois mon univers,<br>
+                        Ton sourire est mon soleil qui éclaire l'hiver.<br>
+                        Chaque jour à tes côtés est une bénédiction,<br>
+                        Tu es ma plus belle et douce passion.
+                    </p>
+                    <p class="poem-author">- Pour toi, mon amour</p>
+                </div>
+                
+                <div class="poem-slide">
+                    <h2 class="poem-title">L'Anniversaire de Mon Âme Sœur</h2>
+                    <p class="poem-content">
+                        En ce jour spécial où tu vins au monde,<br>
+                        Le destin m'offrit la perle la plus ronde.<br>
+                        Chaque année qui passe est un nouveau bonheur,<br>
+                        Car je te découvre encore avec tout mon cœur.
+                    </p>
+                    <p class="poem-author">- Pour toi, mon amour</p>
+                </div>
+                
+                <div class="poem-slide">
+                    <h2 class="poem-title">Éternel Printemps</h2>
+                    <p class="poem-content">
+                        Comme les fleurs au printemps renaissent,<br>
+                        Mon amour pour toi sans cesse s'accroît.<br>
+                        En ce jour marqué par les étoiles,<br>
+                        Je te promets encore mille années d'émoi.
+                    </p>
+                    <p class="poem-author">- Pour toi, mon amour</p>
+                </div>
+                
+                <div class="poem-slide">
+                    <h2 class="poem-title">Notre Histoire</h2>
+                    <p class="poem-content">
+                        Page après page, notre histoire s'écrit,<br>
+                        Avec tes rires, tes larmes, chaque petit esprit.<br>
+                        Aujourd'hui nous tournons un nouveau chapitre,<br>
+                        Plus beau que jamais, rempli de magie et de mystère.
+                    </p>
+                    <p class="poem-author">- Pour toi, mon amour</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slide-indicators" id="indicators"></div>
+        
+        <footer>
+            <p>Créé avec tout mon amour pour ton anniversaire • © <span id="year"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('slider');
+            const slides = document.querySelectorAll('.poem-slide');
+            const indicatorsContainer = document.getElementById('indicators');
+            let currentIndex = 0;
+            let slideInterval;
+            const slideDuration = 6000; // 6 secondes par slide
+            
+            // Afficher l'année actuelle
+            document.getElementById('year').textContent = new Date().getFullYear();
+            
+            // Créer les indicateurs
+            slides.forEach((slide, index) => {
+                const indicator = document.createElement('div');
+                indicator.classList.add('indicator');
+                if (index === 0) indicator.classList.add('active');
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+                indicatorsContainer.appendChild(indicator);
+            });
+            
+            // Démarrer le défilement automatique
+            startSlider();
+            
+            // Gestion du redimensionnement
+            window.addEventListener('resize', adjustSliderHeight);
+            
+            function adjustSliderHeight() {
+                const carousel = document.querySelector('.poem-carousel');
+                if (!carousel) return;
+                
+                // Réinitialiser la hauteur
+                carousel.style.height = 'auto';
+                
+                // Trouver la hauteur maximale des slides
+                let maxHeight = 0;
+                slides.forEach(slide => {
+                    if (slide.offsetHeight > maxHeight) {
+                        maxHeight = slide.offsetHeight;
+                    }
+                });
+                
+                // Appliquer la hauteur
+                carousel.style.height = `${maxHeight}px`;
+            }
+            
+            function startSlider() {
+                slideInterval = setInterval(nextSlide, slideDuration);
+                // Ajuster la hauteur après le chargement
+                setTimeout(adjustSliderHeight, 100);
+            }
+            
+            function resetSlider() {
+                clearInterval(slideInterval);
+                startSlider();
+            }
+            
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slides.length;
+                updateSlider();
+            }
+            
+            function goToSlide(index) {
+                currentIndex = index;
+                updateSlider();
+                resetSlider();
+            }
+            
+            function updateSlider() {
+                slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // Mettre à jour les indicateurs
+                document.querySelectorAll('.indicator').forEach((indicator, index) => {
+                    if (index === currentIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Créer des cœurs flottants
+            function createHearts() {
+                const heartsContainer = document.getElementById('hearts');
+                const colors = ['#ff6b8b', '#ff8e9e', '#ffb3c1', '#ffd8e1'];
+                
+                setInterval(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '<i class="fas fa-heart"></i>';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.fontSize = (Math.random() * 15 + 8) + 'px';
+                    heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    
+                    heartsContainer.appendChild(heart);
+                    
+                    // Supprimer le cœur après l'animation
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 6000);
+                }, 300);
+            }
+            
+            createHearts();
+            
+            // Ajustement initial
+            adjustSliderHeight();
+        });
+    </script>
+</body>
+</html>
