@@ -23,6 +23,22 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <style>
+        /* Empêche la sélection sur tous les éléments */
+        * {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        
+        /* Autorise la sélection uniquement sur les poèmes */
+        .poem-slide * {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
         :root {
             --primary-color: #ff6b8b;
             --secondary-color: #ff8e9e;
@@ -37,6 +53,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            touch-action: manipulation; /* Améliore la réactivité tactile */
         }
         
         body {
@@ -507,9 +524,47 @@
                 height: 140px;
             }
         }
+        
+        /* Loader pour un chargement plus fluide */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader::after {
+            content: "";
+            width: 75px;
+            height: 75px;
+            border: 10px solid #dddddd;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: loading 0.75s ease infinite;
+        }
+        
+        @keyframes loading {
+            from { transform: rotate(0turn); }
+            to { transform: rotate(1turn); }
+        }
     </style>
 </head>
 <body>
+    <!-- Loader pour un chargement plus fluide -->
+    <div class="loader" id="loader"></div>
+    
     <!-- Particles.js Background -->
     <div id="particles-js"></div>
     
@@ -532,7 +587,7 @@
             
             <div class="photo-container">
                 <!-- Remplace le src par la photo de ta femme -->
-                <img src="/photo/image1.jpg" alt="Ma merveilleuse femme" class="animate__animated animate__zoomIn">
+                <img src="./photo/image1.jpg" alt="Ma merveilleuse femme" class="animate__animated animate__zoomIn" id="mainPhoto">
             </div>
         </header>
         
@@ -839,6 +894,24 @@
                 document.documentElement.style.setProperty('--secondary-color', `hsl(${hue + 10}, 100%, 75%)`);
                 document.documentElement.style.setProperty('--accent-color', `hsl(${hue - 10}, 100%, 65%)`);
             }, 8000);
+            
+            // Hide loader after content is loaded
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const loader = document.getElementById('loader');
+                    loader.classList.add('hidden');
+                    
+                    // Remove loader from DOM after animation completes
+                    loader.addEventListener('transitionend', function() {
+                        loader.remove();
+                    });
+                }, 1000);
+            });
+            
+            // Prevent context menu on the whole page
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
         });
     </script>
 </body>
