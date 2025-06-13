@@ -39,6 +39,24 @@
             user-select: text;
         }
         
+        /* SOLUTION: Empêcher spécifiquement la sélection de la bougie */
+        .birthday-candle, .birthday-candle * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            pointer-events: none; /* Empêche les événements de souris sur les éléments enfants */
+        }
+        
+        .birthday-candle {
+            pointer-events: auto; /* Permet les événements sur le conteneur principal */
+        }
+        
+        /* SOLUTION: Désactiver le surlignage au clic sur mobile */
+        .birthday-candle {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         :root {
             --primary-color: #ff6b8b;
             --secondary-color: #ff8e9e;
@@ -863,6 +881,20 @@
                     onComplete: function() {
                         gsap.set('.flame', { scale: 1, opacity: 1 });
                     }
+                });
+            });
+            
+            // SOLUTION: Empêcher le drag sur la bougie et ses enfants
+            candle.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            const candleChildren = candle.querySelectorAll('*');
+            candleChildren.forEach(child => {
+                child.addEventListener('dragstart', function(e) {
+                    e.preventDefault();
+                    return false;
                 });
             });
             
