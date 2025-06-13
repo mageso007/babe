@@ -498,6 +498,72 @@
             }
         }
         
+        /* Music player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .music-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(255,107,139,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .music-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-color);
+        }
+        
+        .volume-control {
+            width: 100px;
+            height: 6px;
+            background: rgba(94, 43, 59, 0.2);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .volume-level {
+            position: absolute;
+            height: 100%;
+            width: 70%;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .volume-knob {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            top: 50%;
+            left: 70%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+        }
+        
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .container {
@@ -522,6 +588,12 @@
                 max-width: 90%;
                 line-height: 1.8;
             }
+            
+            .music-player {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -540,6 +612,19 @@
             .photo-container {
                 width: 140px;
                 height: 140px;
+            }
+            
+            .music-player {
+                padding: 8px 12px;
+            }
+            
+            .music-btn {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .volume-control {
+                width: 80px;
             }
         }
         
@@ -597,6 +682,23 @@
         <div class="flame"></div>
         <div class="candle"></div>
     </div>
+    
+    <!-- Music Player -->
+    <div class="music-player" id="musicPlayer">
+        <button class="music-btn" id="playBtn">
+            <i class="fas fa-play"></i>
+        </button>
+        <div class="volume-control" id="volumeControl">
+            <div class="volume-level" id="volumeLevel"></div>
+            <div class="volume-knob" id="volumeKnob"></div>
+        </div>
+    </div>
+    
+    <!-- Audio Element -->
+    <audio id="backgroundMusic" loop>
+        <source src="./music/mychant.mp3" type="audio/mpeg">
+        Votre navigateur ne supporte pas l'élément audio.
+    </audio>
     
     <div class="container">
         <header class="animate__animated animate__fadeInDown">
@@ -944,6 +1046,106 @@
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
             });
+            
+            // MUSIC PLAYER FUNCTIONALITY
+            const audioPlayer = document.getElementById('backgroundMusic');
+            const playBtn = document.getElementById('playBtn');
+            const playIcon = playBtn.querySelector('i');
+            const volumeControl = document.getElementById('volumeControl');
+            const volumeLevel = document.getElementById('volumeLevel');
+            const volumeKnob = document.getElementById('volumeKnob');
+            
+            // Set initial volume to 50%
+            audioPlayer.volume = 0.5;
+            
+            // Update volume UI
+            function updateVolumeUI() {
+                const volume = audioPlayer.volume;
+                volumeLevel.style.width = `${volume * 100}%`;
+                volumeKnob.style.left = `${volume * 100}%`;
+            }
+            
+            // Play/Pause button
+            playBtn.addEventListener('click', function() {
+                if (audioPlayer.paused) {
+                    audioPlayer.play()
+                        .then(() => {
+                            playIcon.classList.remove('fa-play');
+                            playIcon.classList.add('fa-pause');
+                        })
+                        .catch(e => console.error("Erreur de lecture audio:", e));
+                } else {
+                    audioPlayer.pause();
+                    playIcon.classList.remove('fa-pause');
+                    playIcon.classList.add('fa-play');
+                }
+            });
+            
+            // Volume control
+            let isDragging = false;
+            
+            function setVolume(percent) {
+                const volume = Math.min(1, Math.max(0, percent));
+                audioPlayer.volume = volume;
+                updateVolumeUI();
+            }
+            
+            volumeControl.addEventListener('click', function(e) {
+                const rect = volumeControl.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                setVolume(percent);
+            });
+            
+            volumeKnob.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    const rect = volumeControl.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    setVolume(percent);
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+            
+            // Touch events for mobile
+            volumeKnob.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                e.preventDefault();
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (isDragging) {
+                    const touch = e.touches[0];
+                    const rect = volumeControl.getBoundingClientRect();
+                    const percent = (touch.clientX - rect.left) / rect.width;
+                    setVolume(percent);
+                }
+            });
+            
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+            
+            // Initialize UI
+            updateVolumeUI();
+            
+            // Auto start music after 3 seconds (if user doesn't interact)
+            setTimeout(() => {
+                if (audioPlayer.paused) {
+                    audioPlayer.play()
+                        .then(() => {
+                            playIcon.classList.remove('fa-play');
+                            playIcon.classList.add('fa-pause');
+                        })
+                        .catch(e => console.log("La lecture automatique a été bloquée par le navigateur"));
+                }
+            }, 3000);
         });
     </script>
 </body>
